@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.2.0';
-import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
 import { GoogleGenAI } from 'https://esm.sh/@google/genai';
 
+const { useState, useEffect, useRef } = React;
 const e = React.createElement;
 
 // --- ICONS ---

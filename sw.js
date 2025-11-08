@@ -1,4 +1,4 @@
-const CACHE_NAME = 'psychosuite-v7'; // Увеличена версия для принудительного обновления
+const CACHE_NAME = 'psychosuite-v8'; // Увеличена версия для принудительного обновления
 const urlsToCache = [
   './',
   './index.html',
@@ -6,10 +6,10 @@ const urlsToCache = [
   './sw-register.js',
   './manifest.json',
   // Важные внешние зависимости для полного офлайн-режима
-  'https://esm.sh/react@18.2.0',
-  'https://esm.sh/react-dom@18.2.0/client',
+  'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js',
+  'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js',
   'https://esm.sh/@google/genai',
-  'https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js'
+  'https://cdn.tailwindcss.com'
 ];
 
 self.addEventListener('install', event => {
