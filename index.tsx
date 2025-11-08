@@ -83,8 +83,8 @@ class GeminiAIService {
     private ai: GoogleGenAI | null = null;
 
     constructor() {
-        const apiKey = (window as any).GEMINI_API_KEY;
-        if (apiKey && apiKey !== "ВАШ_КЛЮЧ_API_СЮДА") {
+        const apiKey = process.env.API_KEY;
+        if (apiKey) {
             try {
                 this.ai = new GoogleGenAI({ apiKey });
             } catch (error) {
@@ -92,7 +92,7 @@ class GeminiAIService {
                 this.ai = null;
             }
         } else {
-            console.warn("Gemini API Key is not configured in config.js. AI features will be unavailable.");
+            console.warn("Gemini API Key is not configured. AI features will be unavailable.");
             this.ai = null;
         }
     }
@@ -572,7 +572,7 @@ const TestResultScreen: React.FC<{
 
     const getAIInterpretation = async () => {
         if (!aiService.isAvailable()) {
-            alert("Сервис AI недоступен. Проверьте ключ API в файле config.js.");
+            alert("Сервис AI недоступен. Ключ API не настроен.");
             return;
         }
         setIsLoading(true);
@@ -656,7 +656,7 @@ const TestResultScreen: React.FC<{
                 result.aiInterpretation ? React.createElement('div', { className: "whitespace-pre-wrap p-2 bg-gray-50 dark:bg-gray-700 rounded" }, result.aiInterpretation)
                     : (
                         React.createElement('div', null,
-                            !aiService.isAvailable() && React.createElement('p', { className: "text-yellow-600 dark:text-yellow-400" }, "Сервис AI недоступен. Укажите API_KEY в файле config.js для использования этой функции."),
+                            !aiService.isAvailable() && React.createElement('p', { className: "text-yellow-600 dark:text-yellow-400" }, "Сервис AI недоступен. Ключ API не предоставлен."),
                             aiService.isAvailable() && React.createElement(Button, { onClick: getAIInterpretation, disabled: isLoading }, isLoading ? "Генерация..." : "Получить расширенную интерпретацию")
                         )
                     )
@@ -882,51 +882,4 @@ const SettingsScreen: React.FC<{
             React.createElement(Card, null,
                 React.createElement('h2', { className: "text-lg font-bold mb-2" }, "Импорт данных"),
                 React.createElement('p', { className: "text-gray-600 dark:text-gray-400 mb-4" }, "Загрузить данные из ранее экспортированного JSON-файла. Внимание: это перезапишет все текущие данные!"),
-                React.createElement('input', { type: 'file', accept: '.json', onChange: handleImport, className: "hidden", ref: importRef }),
-                React.createElement(Button, { onClick: () => importRef.current?.click() }, "Импортировать")
-            )
-        )
-    );
-};
-
-
-// --- MAIN APP COMPONENT ---
-const App = () => {
-  const [screen, setScreen] = useStickyState<ScreenState>({ name: 'home' }, 'screen');
-  const [clients, setClients] = useStickyState<Client[]>([], 'clients');
-  const [testResults, setTestResults] = useStickyState<TestResult[]>([], 'testResults');
-  const [reports, setReports] = useStickyState<Report[]>([], 'reports');
-  
-  const setData = (data: { clients: Client[], testResults: TestResult[], reports: Report[] }) => {
-      setClients(data.clients);
-      setTestResults(data.testResults);
-      setReports(data.reports);
-  };
-
-  const renderScreen = () => {
-    switch (screen.name) {
-      case 'home':
-        return React.createElement(HomeScreen, { setScreen });
-      case 'clientList':
-        return React.createElement(ClientListScreen, { clients, setScreen });
-      case 'clientForm':
-        return React.createElement(ClientForm, { clients, setClients, setScreen, clientId: screen.clientId });
-      case 'clientDetail':
-        return React.createElement(ClientDetailScreen, { setScreen, clientId: screen.clientId!, clients, testResults, reports });
-      case 'test':
-        return React.createElement(TestScreen, { setScreen, clientId: screen.clientId!, testKey: screen.testKey!, testResults, setTestResults });
-      case 'testResult':
-        return React.createElement(TestResultScreen, { setScreen, resultId: screen.resultId!, clients, testResults, setTestResults });
-      case 'report':
-        return React.createElement(ReportScreen, { setScreen, clientId: screen.clientId!, reportId: screen.reportId, clients, testResults, reports, setReports });
-      case 'settings':
-        return React.createElement(SettingsScreen, { setScreen, setData });
-      default:
-        return React.createElement(HomeScreen, { setScreen });
-    }
-  };
-
-  return React.createElement('div', { className: "min-h-screen bg-gray-100 dark:bg-gray-900" }, renderScreen());
-};
-
-export default App;
+                React.createElement('input', { type: 'file', accept: '.json', onChange: handleImport, className: "hidden

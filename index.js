@@ -51,8 +51,8 @@ function useStickyState(defaultValue, key) {
 // --- API SERVICE ---
 class GeminiAIService {
     constructor() {
-        const apiKey = window.GEMINI_API_KEY;
-        if (apiKey && apiKey !== "ВАШ_КЛЮЧ_API_СЮДА") {
+        const apiKey = process.env.API_KEY;
+        if (apiKey) {
             try {
                 this.ai = new GoogleGenAI({ apiKey });
             } catch (error) {
@@ -60,7 +60,7 @@ class GeminiAIService {
                 this.ai = null;
             }
         } else {
-            console.warn("Gemini API Key is not configured in config.js. AI features will be unavailable.");
+            console.warn("Gemini API Key is not configured. AI features will be unavailable.");
             this.ai = null;
         }
     }
@@ -504,7 +504,7 @@ const TestResultScreen = ({ setScreen, resultId, clients, testResults, setTestRe
 
     const getAIInterpretation = async () => {
         if (!aiService.isAvailable()) {
-            alert("Сервис AI недоступен. Проверьте ключ API в файле config.js.");
+            alert("Сервис AI недоступен. Ключ API не настроен.");
             return;
         }
         setIsLoading(true);
@@ -588,7 +588,7 @@ const TestResultScreen = ({ setScreen, resultId, clients, testResults, setTestRe
                 e('h3', { className: "text-md font-bold mb-2" }, "AI Интерпретация"),
                 result.aiInterpretation ? e('div', { className: "whitespace-pre-wrap p-2 bg-gray-50 dark:bg-gray-700 rounded" }, result.aiInterpretation)
                     : e('div', null,
-                        !aiService.isAvailable() && e('p', { className: "text-yellow-600 dark:text-yellow-400" }, "Сервис AI недоступен. Укажите API_KEY в файле config.js для использования этой функции."),
+                        !aiService.isAvailable() && e('p', { className: "text-yellow-600 dark:text-yellow-400" }, "Сервис AI недоступен. Ключ API не предоставлен."),
                         aiService.isAvailable() && e(Button, { onClick: getAIInterpretation, disabled: isLoading }, isLoading ? "Генерация..." : "Получить расширенную интерпретацию")
                     )
             )
